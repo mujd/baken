@@ -4,9 +4,7 @@
 <section id="wrapper" class="login-register login-sidebar" style="background-image:url(assets/images/background/login-register2.jpg);">
     <div class="login-box card register-box sombra1">
         <div class="card-body">
-            <!-- <form ngNativeValidate [formGroup]="forma" (ngSubmit)="registrarUsuario()" class="form-horizontal form-material" id="loginform" action="index.html"> -->
             <form #f="ngForm" ngNativeValidate (ngSubmit)="registrarUsuario(f)" class="form-horizontal form-material" id="loginform" autocomplete="off">
-                <!-- <a href="javascript:void(0)" class="text-center db"><img src="assets/images/logo-icon.png" alt="Home" /><br/><img src="assets/images/logo-text.png" alt="Home" /></a> -->
                 <h3 class="box-title text-center">Registrate</h3>
                 <div class="form-group m-t-20">
                     <div class="col-xs-12">
@@ -22,7 +20,6 @@
                     <div class="col-xs-12">
                         <select [(ngModel)]="usuario.role" name="role" class="form-control" id="role">
                             <option selected value="">---- selecciona un rol ----</option>
-                                <!-- <option *ngFor="let role of roles" value="role.value">{{role.role}}</option> -->
                                 <option value="ADMIN_ROLE">Administrador</option>
                                 <option value="TEC_ROLE">Tecnico</option>
                             </select>
@@ -36,7 +33,7 @@
                 </div>
                 <div class="form-group text-center m-t-20">
                     <div class="col-xs-12">
-                        <button class="btn btn-dark btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Registrarme</button>
+                        <button class="btn btn-dark btn-lg btn-block text-uppercase" type="submit">Registrarme</button>
                     </div>
                 </div>
                 <div class="form-group m-b-0">

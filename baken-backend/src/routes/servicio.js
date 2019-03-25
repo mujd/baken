@@ -9,12 +9,12 @@ let Servicio = require('../models/servicio');
 // ============================
 // Mostrar todos los servicios
 // ============================
-app.get('/servicio', verificaToken, (req, res) => {
+app.get('/servicio', (req, res) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
     let limite = req.query.limite || 5;
     limite = Number(limite);
-    Servicio.find({}, 'tipoServicio valorUf usuario')
+    Servicio.find({}, 'tipoServicio valorUf valorPesos fecha usuario')
         .sort('valorUf')
         .skip(desde)
         .limit(limite)
@@ -42,7 +42,7 @@ app.get('/servicio', verificaToken, (req, res) => {
 // ============================
 // Mostrar una servicio por ID
 // ============================
-app.get('/servicio/:id', verificaToken, (req, res) => {
+app.get('/servicio/:id', (req, res) => {
     //Servicio.findById();
     let id = req.params.id;
     Servicio.findById(id)
@@ -81,6 +81,9 @@ app.post('/servicio', verificaToken, (req, res) => {
     let servicio = new Servicio({
         tipoServicio: body.tipoServicio,
         valorUf: body.valorUf,
+        valorPesos: parseFloat(body.valorPesos),
+        /* valorPesos: body.valorPesos, */
+        fecha: body.fecha,
         usuario: req.usuario._id // Con middleware verificaToken se puede obtener el id del usuario
     });
 
@@ -111,7 +114,7 @@ app.post('/servicio', verificaToken, (req, res) => {
 // ============================
 app.put('/servicio/:id', verificaToken, (req, res) => {
     let id = req.params.id;
-    let bodyServicio = _.pick(req.body, ['tipoServicio', 'valorUf']);
+    let bodyServicio = _.pick(req.body, ['tipoServicio', 'valorUf', 'valorPesos', 'valorFecha']);
     Servicio.findByIdAndUpdate(id, bodyServicio, { new: true, runValidators: true }, (err, servicioDB) => {
         if (err) {
             return res.status(500).json({

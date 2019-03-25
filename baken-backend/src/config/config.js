@@ -38,4 +38,4 @@ process.env.CADUCIDAD_TOKEN = process.env.EXPIRATION_TOKEN;
 // SEED de autenticación
 //==================================
 
-process.env.SEED = process.env.SEED || process.env.SEED_DEV;
+module.exports.SEED = process.env.SEED_DEV;

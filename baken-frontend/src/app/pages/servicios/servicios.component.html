@@ -1,32 +1,84 @@
-<div class="row mt-3">
-    <div class="col-md-12">
+<!-- <div class="row mt-3 animated fadeIn" *ngIf="cargando">
+    <div class="col-sm-12 text-center">
+        <h2 class="text-uppercase"><strong>Cargando Servicios...</strong></h2>
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+        <br>
+        <span><small>Espere por favor...</small></span>
+    </div>
+</div> -->
+<div class="row mt-3 animated fadeIn">
 
-        <div class="card sombra1">
+    <div class="col-xs-12 col-sm-12 col-md-8">
+        <div class="card cardServicio sombra1">
             <div class="card-body">
-                <h4 class="card-title">Servicios</h4>
-                <table class="table table-striped table-inverse table-responsive">
+                <input #input (keyup)="buscarServicio(input.value)" type="text" class="form-control form-control-sm" placeholder="Buscar servicio...">
+                <div class="row mt-3">
+                    <h3 class="card-title ml-3">Servicios registrados (<small>{{totalRegistros}}</small>)</h3>
+                    <h5 class="text-uppercase mt-2 ml-3 text-danger animated fadeIn" *ngIf="cargando"><strong>Cargando <i class="fas fa-spinner fa-spin"></i></strong></h5>
+                </div>
+
+                <table class="table table-sm table-striped table-hover table-responsive text-center w-100">
+
                     <thead class="thead-dark">
                         <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th>Servicio</th>
+                            <th>Valor UF</th>
+                            <th>Valor $</th>
+                            <th>Fecha</th>
+                            <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td scope="row"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td scope="row"></td>
-                            <td></td>
-                            <td></td>
+                        <tr *ngFor="let servicio of servicios">
+                            <td>{{ servicio.tipoServicio }}</td>
+                            <td>{{ servicio.valorUf }}</td>
+                            <td>{{ servicio.valorPesos }}</td>
+                            <!-- <td>{{ servicio.valorPesos | currency:'CLP':'code':'1.1-9' }}</td> -->
+                            <td>{{ servicio.fecha | date:'dd-MM-yyyy' }}</td>
+                            <td>
+                                <button (click)="actualizarServicio(servicio)" class="btn btn-primary btn-sm"><i class="fas fa-pen"></i></button>
+                                <button (click)="borrarServicio(servicio)" class="btn btn-danger btn-sm ml-1"><i class="fas fa-trash"></i></button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
+                <button *ngIf="desde>0" (click)="cambiarDesde(-5)" class="btn btn-secondary btn-sm">Anteriores</button>
+                <button *ngIf="desde+5<=totalRegistros" (click)="cambiarDesde(5)" class="btn btn-secondary btn-sm float-right">Siguientes</button>
             </div>
         </div>
     </div>
-
+    <div class="col-xs-12 col-sm-12 col-md-4">
+        <div class="card cardForm sombra1">
+            <div class="card-body">
+                <h5 class="card-title text-center">Registrar Servicio</h5>
+                <form #f="ngForm" (ngSubmit)="crearServicio(f)">
+                    <input type="hidden" name="_id" #_id="ngModel" [(ngModel)]="_servicioService.servicioSeleccionado._id">
+                    <div class="form-group">
+                        <label for="tipoServicio"><b>Tipo de Servicio</b></label>
+                        <input #name="ngModel" [(ngModel)]="_servicioService.servicioSeleccionado.tipoServicio" name="tipoServicio" type="text" class="form-control form-control-sm" id="tipoServicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valorUfServicio"><b>Valor en UF</b></label>
+                        <input #cant (ngModelChange)="calcular(uf,cant.value)" #name="ngModel" [(ngModel)]="_servicioService.servicioSeleccionado.valorUf" name="valorUf" type="number" min="1" class="form-control form-control-sm" id="valorUfServicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valorUfServicio"><b>Valor en pesos</b></label>
+                        <input #valorPesos="ngModel" [(ngModel)]="pesos" name="valorPesos" type="text" class="form-control form-control-sm" id="valorUfServicio" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha"><b>Fecha</b></label>
+                        <input type="text" name="fecha" #fecha="ngModel" [(ngModel)]="fechaHoyUf" name="fecha" id="fecha" class="form-control form-control-sm" required readonly>
+                    </div>
+                    <div class="form-group text-right">
+                        <button [disabled]="!f.valid" type="submit" class="btn btn-success btn-sm"><i class="fa fa-save"></i> Guardar</button>
+                        <!-- <button (click)="resetForm(f)" class="btn btn-default">Limpiar</button> -->
+                    </div>
+                    <h6>Valor UF hoy: <span class="text-danger">{{uf}}</span></h6>
+                    <h6>Fecha UF hoy: <span class="text-danger">{{fechaUf}}</span></h6>
+                    <!-- <h6>$ <span>{{pesos}}</span></h6> -->
+                </form>
+                <!-- <button (click)="crearServicio()" type="button" class="btn btn-rounded btn-dark"><i class="fa fa-plus"></i> Crear Servicio</button> -->
+            </div>
+        </div>
+    </div>
 </div>

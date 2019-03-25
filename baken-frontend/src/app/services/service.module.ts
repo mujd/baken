@@ -3,20 +3,25 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
 import {
-  /* LoginGuardGuard,
+  LoginGuardGuard,
   AdminGuard,
-  VerificaTokenGuard, */
-
-  UsuarioService
+  VerificaTokenGuard,
+  UsuarioService,
+  ServicioService,
+  TicketService,
+  UnidadFomentoService
 } from './service.index';
 
 @NgModule({
   imports: [CommonModule, HttpClientModule],
   providers: [
-    /* LoginGuardGuard,
+    LoginGuardGuard,
     AdminGuard,
-    VerificaTokenGuard, */
-    UsuarioService
+    VerificaTokenGuard,
+    UsuarioService,
+    ServicioService,
+    TicketService,
+    UnidadFomentoService
   ],
   declarations: []
 })
