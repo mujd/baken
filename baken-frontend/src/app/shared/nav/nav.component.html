@@ -17,12 +17,12 @@
             </li>
             <li id="dropdown" class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user"></i> {{usuario.nombre}}
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item disabled" href="#">Maximiliano Rojas Flores</a>
+                    <a class="dropdown-item disabled" href="#">{{usuario.email}}</a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">LogOut</a>
+                    <a (click)="_usuarioService.logout()" class="dropdown-item" routerLink="">LogOut</a>
                 </div>
             </li>
         </ul>
