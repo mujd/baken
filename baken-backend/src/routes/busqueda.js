@@ -73,7 +73,7 @@ function buscarServicios(busqueda, regex) {
                 if (err) {
                     reject('Error al cargar servicios', err);
                 } else {
-                    resolve(servicios)
+                    resolve(servicios);
                 }
             });
     });
@@ -82,14 +82,14 @@ function buscarServicios(busqueda, regex) {
 function buscarTickets(busqueda, regex) {
     return new Promise((resolve, reject) => {
         Ticket.find({ estado: regex })
-            .populate('usuario', 'nombre email img')
-            .populate('servicio')
+            .populate('servicio', 'tipoServicio valorUf')
+            .populate('usuario', 'nombre email')
             .exec((err, tickets) => {
 
                 if (err) {
                     reject('Error al cargar tickets', err);
                 } else {
-                    resolve(tickets)
+                    resolve(tickets);
                 }
             });
     });

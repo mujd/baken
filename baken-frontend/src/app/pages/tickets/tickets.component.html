@@ -1,30 +1,60 @@
-<div class="row mt-3">
-    <div class="col-md-12">
-
-        <div class="card sombra1">
+<div class="row mt-3 animated fadeIn">
+    <div class="col-xs-12 col-sm-12 col-md-12">
+        <div class="card cardServicio sombra1">
             <div class="card-body">
-                <h4 class="card-title">Tickets</h4>
-                <table class="table table-striped table-inverse table-responsive">
+
+                <div class="text-right mt-0 mb-3">
+                    <button *ngIf="usuario.role == 'ADMIN_ROLE'" [routerLink]="['/ticket','nuevo']" type="button" class="btn btn-rounded btn-dark btn-sm"><i class="fa fa-plus"></i> Crear Ticket</button>
+                </div>
+                <input #input (keyup)="buscarTicket(input.value)" type="text" class="form-control form-control-sm" placeholder="Buscar ticket...">
+                <div class="row mt-3">
+                    <h3 class="card-title ml-3">Tickets registrados (<small>{{totalRegistros}}</small>)</h3>
+                    <h5 class="text-uppercase mt-2 ml-3 text-danger animated fadeIn" *ngIf="cargando"><strong>Cargando <i class="fas fa-spinner fa-spin"></i></strong></h5>
+                </div>
+
+                <table class="table table-bordered table-sm table-striped table-hover table-responsive-lg text-center">
+
                     <thead class="thead-dark">
                         <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th>Estado</th>
+                            <th>Valor $</th>
+                            <th>Fecha</th>
+                            <th>Servicio</th>
+                            <th>Asignado a</th>
+                            <th>Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td scope="row"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td scope="row"></td>
-                            <td></td>
-                            <td></td>
+                        <tr *ngFor="let ticket of tickets">
+                            <td>
+                                <select *ngIf="usuario.role == 'TEC_ROLE'" (change)="cambiarEstado(ticket)" [(ngModel)]="ticket.estado" name="estado" class="form-control form-control-sm w-100">
+                                    <option value="PENDING">PENDING</option>
+                                    <option value="FINISHED">FINISHED</option>
+                                    <option value="PAID" disabled>PAID</option>
+                                </select>
+                                <select *ngIf="usuario.role == 'ADMIN_ROLE'" (change)="cambiarEstado(ticket)" [(ngModel)]="ticket.estado" name="estado" class="form-control form-control-sm w-100">
+                                    <option value="PENDING">PENDING</option>
+                                    <option  value="FINISHED" disabled>FINISHED</option>
+                                    <option value="PAID">PAID</option>
+                                </select>
+                            </td>
+                            <td>{{ ticket.valor }}</td>
+                            <td>{{ ticket.fechaCreacion | fecha | date:'dd-MM-yyyy' }}</td>
+                            <td>{{ ticket.servicio.tipoServicio }}</td>
+                            <td>
+                                {{ ticket.usuario.nombre }}
+                            </td>
+                            <td>
+                                <button *ngIf="usuario.role == 'TEC_ROLE'" title="Asignar Usuario" (click)="asignarUsuario(ticket)" class="btn btn-sm btn-success"><i class="fas fa-star-half-alt"></i><b> Auto Asignar</b></button>
+                                <button *ngIf="usuario.role == 'ADMIN_ROLE'" title="Editar Usuario" [routerLink]="['/ticket', ticket._id]" class="btn btn-primary btn-sm ml-1"><i class="fas fa-pen"></i></button>
+                                <button *ngIf="usuario.role == 'ADMIN_ROLE'" title="Borrar Usuario" (click)="borrarTicket(ticket)" class="btn btn-danger btn-sm ml-1"><i class="fas fa-trash"></i></button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
+                <!-- {{uf}} {{fechaUf}} -->
+                <button *ngIf="desde>0" (click)="cambiarDesde(-5)" class="btn btn-secondary btn-sm">Anteriores</button>
+                <button *ngIf="desde+5<=totalRegistros" (click)="cambiarDesde(5)" class="btn btn-secondary btn-sm float-right">Siguientes</button>
             </div>
         </div>
     </div>

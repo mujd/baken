@@ -1,0 +1,40 @@
+<div class="row animated fadeIn mt-3">
+    <div class="col-md-6">
+        <div class="card sombra1 card-body">
+            <h3 class="box-title m-b-0 text-center">Ticket: {{ ticket.servicio.tipoServicio }}</h3>
+            <!-- <p class="text-muted m-b-30 font-13"> Bootstrap Elements </p> -->
+            <div class="row">
+                <div class="col-sm-12 col-xs-12">
+                    <form #f="ngForm" ngNativeValidate (ngSubmit)="guardarTicket(f)">
+                        <div class="form-group">
+                            <label for="estadoTicket">Estado</label>
+                            <input [(ngModel)]="estado" name="estado" type="text" class="form-control form-control-sm" id="estadoTicket" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="servicio">Servicio</label>
+                            <select (change)="cambioServicio($event.target.value);cambioValor($event.target.value);" [(ngModel)]="ticket.servicio" name="servicio" id="servicio" class="form-control" required>
+                                      <option disabled value="">Seleccione Servicio</option>
+                                      <option *ngFor="let servicio of servicios" [value]="servicio._id">{{servicio.tipoServicio}}</option>
+                                    </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="valorTicket">Valor</label>
+                            <input [(ngModel)]="valorPesos" name="valor" type="text" class="form-control form-control-sm" id="valorTicket" readonly required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaCreacion">Fecha Creación</label>
+                            <input [(ngModel)]="fechaCreacion" name="fechaCreacion" type="text" class="form-control form-control-sm" id="fechaCreacion" readonly required>
+                        </div>
+                        <div class="form-group">
+                            <label for="usuario">Usuario</label>
+                            <input [(ngModel)]="usuarioNombre" name="nombre" type="text" class="form-control form-control-sm" id="usuario" readonly required>
+                        </div>
+                        <input type="hidden" name="_id" #_id="ngModel" [(ngModel)]="_ticketService.ticketSeleccionado._id">
+                        <button [disabled]="!f.valid" type="submit" class="btn btn-success m-r-10"><i class="fa fa-save"></i> Guardar</button>
+                        <button routerLink="/tickets" type="button" class="btn btn-inverse waves-effect waves-light">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

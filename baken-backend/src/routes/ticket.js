@@ -9,17 +9,17 @@ let Ticket = require('../models/ticket');
 // ============================
 // Mostrar todas las tickets
 // ============================
-app.get('/ticket', verificaToken, (req, res) => {
+app.get('/ticket', (req, res) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
     let limite = req.query.limite || 5;
     limite = Number(limite);
-    Ticket.find({}, 'estado valor servicio usuario')
+    Ticket.find({}, 'estado servicio valor fechaCreacion usuario')
         .sort('valor')
         .skip(desde)
         .limit(limite)
-        .populate('servicio', 'tipoServicio valorUf')
-        .populate('usuario', 'nombre email')
+        .populate('servicio', 'tipoServicio valorUf valorPesos fecha')
+        .populate('usuario', 'nombre email role')
         .exec((err, tickets) => {
             if (err) {
                 return res.status(400).json({
@@ -48,11 +48,11 @@ app.get('/ticket/pending', verificaToken, (req, res) => {
     desde = Number(desde);
     let limite = req.query.limite || 5;
     limite = Number(limite);
-    Ticket.find({}, 'estado valor servicio usuario')
+    Ticket.find({}, 'estado servicio valor fechaCreacion usuario')
         .sort('valor')
         .skip(desde)
         .limit(limite)
-        .populate('servicio', 'tipoServicio valorUf')
+        .populate('servicio', 'tipoServicio valorUf valorPesos fecha')
         .populate('usuario', 'nombre email')
         .exec((err, tickets) => {
             if (err) {
@@ -81,11 +81,11 @@ app.get('/ticket/finished', verificaToken, (req, res) => {
     desde = Number(desde);
     let limite = req.query.limite || 5;
     limite = Number(limite);
-    Ticket.find({}, 'estado valor servicio usuario')
+    Ticket.find({}, 'estado servicio valor fechaCreacion usuario')
         .sort('valor')
         .skip(desde)
         .limit(limite)
-        .populate('servicio', 'tipoServicio valorUf')
+        .populate('servicio', 'tipoServicio valorUf valorPesos fecha')
         .populate('usuario', 'nombre email')
         .exec((err, tickets) => {
             if (err) {
@@ -114,11 +114,11 @@ app.get('/ticket/paid', verificaToken, (req, res) => {
     desde = Number(desde);
     let limite = req.query.limite || 5;
     limite = Number(limite);
-    Ticket.find({}, 'estado valor servicio usuario')
+    Ticket.find({}, 'estado servicio valor fechaCreacion usuario')
         .sort('valor')
         .skip(desde)
         .limit(limite)
-        .populate('servicio', 'tipoServicio valorUf')
+        .populate('servicio', 'tipoServicio valorUf valorPesos fecha')
         .populate('usuario', 'nombre email')
         .exec((err, tickets) => {
             if (err) {
@@ -143,11 +143,11 @@ app.get('/ticket/paid', verificaToken, (req, res) => {
 // ============================
 // Mostrar una ticket por ID
 // ============================
-app.get('/ticket/:id', verificaToken, (req, res) => {
+app.get('/ticket/:id', (req, res) => {
     //Ticket.findById();
     let id = req.params.id;
-    Ticket.findById(id)
-        .populate('servicio', 'tipoServicio valorUf')
+    Ticket.findById(id, 'estado servicio valor fechaCreacion usuario')
+        .populate('servicio', 'tipoServicio valorUf valorPesos fecha')
         .populate('usuario', 'nombre email')
         .exec((err, ticketDB) => {
             if (err) {
@@ -181,8 +181,10 @@ app.post('/ticket', verificaToken, (req, res) => {
     let body = req.body; //Obtener el body
 
     let ticket = new Ticket({
-        nombre: body.nombre,
+        estado: body.estado,
         servicio: body.servicio,
+        valor: body.valor,
+        fechaCreacion: body.fechaCreacion,
         usuario: req.usuario._id // Con middleware verificaToken se puede obtener el id del usuario
     });
 
@@ -213,7 +215,7 @@ app.post('/ticket', verificaToken, (req, res) => {
 // ============================
 app.put('/ticket/:id', verificaToken, (req, res) => {
     let id = req.params.id;
-    let bodyTicket = _.pick(req.body, ['estado', 'valor', 'servicio']);
+    let bodyTicket = _.pick(req.body, ['estado', 'servicio', 'valor', 'fechaCreacion', 'usuario']);
     Ticket.findByIdAndUpdate(id, bodyTicket, { new: true, runValidators: true }, (err, ticketDB) => {
         if (err) {
             return res.status(500).json({
@@ -237,12 +239,41 @@ app.put('/ticket/:id', verificaToken, (req, res) => {
 });
 
 // ==================================================
-// Cambia estado a un ticket (PENDING)
+// Cambia valor a un ticket 
 // ==================================================
-app.put('/ticket/estado-pending/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
+app.put('/ticket/cambia-valor/:id', verificaToken, function(req, res) {
     let id = req.params.id;
-    let cambiaEstado = { estado: 'PENDING' }
-    Ticket.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, ticketBorrado) => {
+    let body = _.pick(req.body, ['valor']);
+    Ticket.findByIdAndUpdate(id, body, { new: true }, (err, ticketBorrado) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error al actualizar valor al ticket',
+                error: err
+            });
+        }
+        if (!ticketBorrado) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'No existe un usuario con ese id',
+                error: { message: 'No existe un usuario con ese id' }
+            });
+        }
+        res.status(200).json({
+            ok: true,
+            ticket: ticketBorrado
+        });
+    });
+});
+
+// ==================================================
+// Cambia estado a un ticket 
+// ==================================================
+app.put('/ticket/estado/:id', verificaToken, function(req, res) {
+    let id = req.params.id;
+    let cambiaEstado = { estado: 'PENDING' };
+    let body = _.pick(req.body, ['estado']);
+    Ticket.findByIdAndUpdate(id, body, { new: true }, (err, ticketBorrado) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
@@ -265,16 +296,16 @@ app.put('/ticket/estado-pending/:id', [verificaToken, verificaAdmin_Role], funct
 });
 
 // ==================================================
-// Cambia estado a un ticket (FINISHED)
+// Asignar usuario a un ticket 
 // ==================================================
-app.put('/ticket/estado-finished/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
+app.put('/ticket/asignar/:id', verificaToken, function(req, res) {
     let id = req.params.id;
-    let cambiaEstado = { estado: 'FINISHED' }
-    Ticket.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, ticketBorrado) => {
+    let body = _.pick(req.body, ['usuario']);
+    Ticket.findByIdAndUpdate(id, body, { new: true }, (err, ticketBorrado) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
-                mensaje: 'Error al cambiar estado al ticket',
+                mensaje: 'Error al asignar usuario al ticket',
                 error: err
             });
         }
@@ -292,33 +323,6 @@ app.put('/ticket/estado-finished/:id', [verificaToken, verificaAdmin_Role], func
     });
 });
 
-// ==================================================
-// Cambia estado a un ticket (PAID)
-// ==================================================
-app.put('/ticket/estado-paid/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
-    let id = req.params.id;
-    let cambiaEstado = { estado: 'PAID' }
-    Ticket.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, ticketBorrado) => {
-        if (err) {
-            return res.status(500).json({
-                ok: false,
-                mensaje: 'Error al cambiar estado al ticket',
-                error: err
-            });
-        }
-        if (!ticketBorrado) {
-            return res.status(400).json({
-                ok: false,
-                mensaje: 'No existe un usuario con ese id',
-                error: { message: 'No existe un usuario con ese id' }
-            });
-        }
-        res.status(200).json({
-            ok: true,
-            ticket: ticketBorrado
-        });
-    });
-});
 
 // ============================
 // Borrar tickets

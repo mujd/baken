@@ -9,13 +9,14 @@ let estadosValidos = {
 };
 
 let ticketSchema = new Schema({
-    estado: { type: String, required: [true, 'El estado es necesario'], default: 'PENDING', enum: estadosValidos },
-    valor: { type: Number, required: [true, 'El	valor es necesario'] },
+    estado: { type: String, required: true, enum: estadosValidos },
     servicio: {
         type: Schema.Types.ObjectId,
         ref: 'Servicio',
         required: [true, 'El tipo de servicio es obligatorio ']
     },
+    valor: { type: Number, required: [true, 'El	valor es necesario'] },
+    fechaCreacion: { type: Date, required: [true, 'La fecha es necesaria'] },
     usuario: {
         type: Schema.Types.ObjectId,
         ref: 'Usuario'

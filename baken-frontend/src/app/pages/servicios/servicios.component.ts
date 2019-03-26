@@ -20,10 +20,10 @@ export class ServiciosComponent implements OnInit {
   servicio: Servicio = new Servicio('', '', '', '', '');
   /* servicio: Servicio = new Servicio('', ''); */
   servicios: Servicio[] = [];
-  uf: any;
   pesos: any;
-  fechaUf: Date;
   fechaHoyUf: Date;
+  uf: any;
+  fechaUf: Date;
   desde = 0;
 
   totalRegistros = 0;

@@ -18,10 +18,10 @@ export class AdminGuard implements CanActivate {
       return true;
     } else {
       console.log('Bloqueado por el ADMIN GUARD');
-      /* this._usuarioService.logout(); */
-      /* this.router.navigate(['/login']); */
+      /* this._usuarioService.logout();
+      this.router.navigate(['/login']); */
 
-      this.router.navigate(['/not-authorized']);
+      /* this.router.navigate(['/not-authorized']); */
       /*error 401 Unauthorized*/
       return false;
     }

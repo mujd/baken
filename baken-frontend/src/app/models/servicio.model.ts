@@ -1,11 +1,3 @@
-/* export class Servicio {
-  constructor(
-    public tipoServicio: string,
-    public valorUf: string,
-    public _id?: string
-  ) {}
-} */
-
 export class Servicio {
   constructor(
     _id = '',

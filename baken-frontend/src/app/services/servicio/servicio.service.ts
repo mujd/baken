@@ -21,18 +21,14 @@ export class ServicioService {
     public router: Router
   ) {
     this.servicioSeleccionado = new Servicio();
-    /* console.log("Servicio de servicio listo"); */
-    /* this.cargarStorage(); */
   }
 
   cargarServicios(desde: number = 0) {
     const url = URL_SERVICIOS + '/servicio?desde=' + desde;
-    /* let url = URL_SERVICIOS + "/servicio"; */
     return this.http.get(url);
   }
   cargarServiciosOtro() {
-    const limiteServicio = 999;
-    const url = URL_SERVICIOS + '/servicio?limite=' + limiteServicio;
+    const url = URL_SERVICIOS + '/servicio';
 
     return this.http.get(url).pipe(
       map((resp: any) => {
@@ -41,16 +37,6 @@ export class ServicioService {
       })
     );
   }
-  /* cargarServiciosOtro() {
-    let url = URL_SERVICIOS + "/servicio";
-
-    return this.http.get(url).pipe(
-      map((resp: any) => {
-        this.totalServicios = resp.total;
-        return resp.servicios;
-      })
-    );
-  } */
 
   obtenerServicio(id: string) {
     const url = URL_SERVICIOS + '/servicio/' + id;
@@ -68,7 +54,6 @@ export class ServicioService {
     );
   }
 
-  /* crearServicio(servicio: Servicio) { */
   crearServicios(nombre: string) {
     let url = URL_SERVICIOS + '/servicio';
     url += '?token=' + this._usuarioService.token;
@@ -80,19 +65,6 @@ export class ServicioService {
       })
     );
   }
-  /* crearServicio(servicio: Servicio) {
-    const url = URL_SERVICIOS + '/servicio';
-    return this.http.post(url, servicio).pipe(
-      map((resp: any) => {
-        swal('Servicio Creado', servicio.tipoServicio, 'success');
-        return resp.servicio;
-      }),
-      catchError(err => {
-        swal(err.error.mensaje, err.error.error.message, 'error');
-        return throwError(err);
-      })
-    );
-  } */
 
   buscarServicio(termino: string) {
     const url = URL_SERVICIOS + '/busqueda/coleccion/servicios/' + termino;

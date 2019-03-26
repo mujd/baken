@@ -35,6 +35,6 @@ export class LoginComponent implements OnInit {
 
     this._usuarioService
       .login(usuario, forma.value.recuerdame)
-      .subscribe(correcto => this.router.navigate(['/home']));
+      .subscribe(correcto => this.router.navigate(['/servicios']));
   }
 }
